@@ -100,7 +100,7 @@ public class Banking
     public static boolean delete_user(int user_id) {
     	int del = uu.deleteUser(user_id);
     	System.out.println("del: " + del);
-    	return (del != 1);
+    	return (del != -1);
     }
     
     public static int log_in(String username, String password) {
@@ -176,6 +176,15 @@ public class Banking
     	return false;
     }
     
+    public static int test_get_account_by_name_and_id(int user_id, String name) {
+    	List<Account> accts = aa.getAccountByUserID(user_id);
+    	for(Account acct : accts) {
+    		if(acct.getAcct_name().equals(name))
+    			return acct.getAcct_id();
+    	}
+    	return -1;
+    }
+    
     public static void selected_acct(int user_log, int acct_num) {
     	Account acct;
     	List<Account> connected_accts;
@@ -200,7 +209,10 @@ public class Banking
 	    		input = scan.next();
 	    		try {
     				int ammt = Integer.parseInt(input);
-    				deposit(acct, ammt);
+    				if(ammt > 0)
+    					deposit(acct, ammt);
+    				else
+    					System.out.println("Enter a positive amount.");
     			}
     			catch (NumberFormatException e) {
     				System.out.println("Enter a valid amount.");
@@ -212,7 +224,10 @@ public class Banking
 	    		input = scan.next();
 	    		try {
     				int ammt = Integer.parseInt(input);
-    				withdraw(acct, ammt);
+    				if(ammt > 0)
+    					withdraw(acct, ammt);
+    				else
+    					System.out.println("Enter a positive amount.");
     			}
     			catch (NumberFormatException e) {
     				System.out.println("Enter a valid amount.");
@@ -251,7 +266,11 @@ public class Banking
 					String input2 = scan.next();
 					try {
 	    				int ammt = Integer.parseInt(input2);
-	    				transfer(acct, other, ammt);
+	    				if(ammt > 0)
+	    					transfer(acct, other, ammt);
+	    				else{
+	    					System.out.println("Enter a positive amount.");
+	    				}
 	    			}
 	    			catch (NumberFormatException e) {
 	    				System.out.println("Enter a valid amount.");

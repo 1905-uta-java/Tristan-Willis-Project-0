@@ -136,4 +136,68 @@ public class BankingTest
     public void DeleteNonExistingUserTest() {
     	assertFalse(Banking.delete_user(-1));
     }
+    
+    /*
+     * Create / Delete Account tests
+     */
+    
+    @Test
+    public void createDeleteAccountSuccessTest() {
+    	int acct_id = -1;
+    	assertTrue(Banking.create_acct(1, "Test"));
+    	assertTrue((acct_id = Banking.test_get_account_by_name_and_id(1, "Test")) != -1);
+    	assertTrue(Banking.deleteAccount(acct_id));
+    }
+    
+    @Test
+    public void userNonExistingTest() {
+    	assertFalse(Banking.create_acct(-1, "Fail"));
+    }
+    
+    @Test
+    public void accountNameTooLongTest() {
+    	assertFalse(Banking.create_acct(1, "1234567891113151719212325272931"));
+    }
+    
+    /*
+     * Deposit/Withdraw/Transfer/Delete Tests
+     */
+    
+    @Test
+    public void successfullDepositWithdrawTransferDeleteTest() {
+    	int user_id = 0;
+    	int acct_id = 0;
+    	int other_acct = 0;
+    	assertTrue(Banking.create_user("Test", "Test"));
+    	assertTrue((user_id = Banking.log_in("Test", "Test")) != -1);
+    	assertTrue(Banking.create_acct(user_id, "Test"));
+    	assertTrue((acct_id = Banking.test_get_account_by_name_and_id(user_id, "Test")) != -1);
+    	assertTrue(Banking.create_acct(user_id, "Test2"));
+    	assertTrue((other_acct = Banking.test_get_account_by_name_and_id(user_id, "Test2")) != -1);
+    	Account a = new Account(acct_id, user_id, 100, "Test");
+    	Account o = new Account(other_acct, user_id, 100, "Test2");
+    	assertTrue(Banking.deposit(a, 500));
+    	assertTrue(Banking.withdraw(a, 250));
+    	assertTrue(Banking.transfer(a, o, 250));
+    	assertTrue(Banking.deleteAccount(other_acct));
+    	Banking.delete_user(user_id);
+    }
+    
+    @Test
+    public void withdrawIntoNegatives() {
+    	Account a = new Account(1, 1, 100, "unnamed");
+    	assertFalse(Banking.withdraw(a, 500));
+    }
+    
+    @Test
+    public void transferIntoNegatives() {
+    	Account a = new Account(1, 1, 100, "unnamed");
+    	Account o = new Account(1, 1, 100, "unnamed");
+    	assertFalse(Banking.transfer(a, o, 500));
+    }
+    
+    @Test
+    public void deleteNonExistingAccountTest() {
+    	assertFalse(Banking.deleteAccount(-1));
+    }
 }
